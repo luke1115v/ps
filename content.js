@@ -6,7 +6,6 @@ window.onload = function () {
     const rows = document.querySelectorAll("tr"); // Select all rows in the table
     let totalEarnedPoints = 0;
     let totalPossiblePoints = 0;
-    let validRows = 0; // Track the number of valid rows
 
     rows.forEach((row, index) => {
       // Skip the first three rows (header or irrelevant data)
@@ -14,20 +13,20 @@ window.onload = function () {
 
       const cells = row.querySelectorAll("td"); // Get all cells in the row
       if (cells.length > 0) {
-        // Assuming the assignment type is in the second-to-last column
+        // Assuming assignment type is in the second-to-last column
         const assignmentType = cells[cells.length - 12]?.innerText?.trim();
+
+        // Skip the row if the assignment type is undefined or invalid
+        if (!assignmentType) {
+          console.log(`Skipping invalid row: ${index + 1} (Invalid assignment type)`);
+          return; // Skip this row
+        }
 
         // Assuming the score is in the second-to-last column for each row
         const scoreText = cells[cells.length - 3]?.innerText?.trim(); // Safely access the second-to-last column
 
         // Log the scoreText and assignmentType for debugging purposes
         console.log(`Row ${index + 1}: ${scoreText}, Type: ${assignmentType}`);
-
-        // Ensure both scoreText and assignmentType are valid
-        if (!scoreText || !assignmentType) {
-          console.log(`Skipping invalid row: ${index + 1}`);
-          return; // Skip this row if either scoreText or assignmentType is invalid
-        }
 
         // Try to find a valid "earned/possible" fraction (e.g., "1/1")
         const scoreMatch = scoreText.match(/(\d+\/\d+)/); // Match a fraction format like "1/1"
@@ -58,7 +57,6 @@ window.onload = function () {
           if (!isNaN(earned) && !isNaN(possible)) {
             totalEarnedPoints += earned * weight;
             totalPossiblePoints += possible * weight;
-            validRows++; // Increment valid rows counter
           } else {
             console.log(`Invalid score format: ${earnedPossible}`);
           }
@@ -69,17 +67,6 @@ window.onload = function () {
         console.log(`Skipping empty row: ${index + 1}`);
       }
     });
-
-    // If no valid rows were processed, skip further calculation
-    if (validRows === 0) {
-      console.log("No valid rows found.");
-      displayOverallPercentage(0);
-      return;
-    }
-
-    // After calculation, we adjust the total possible points and earned points
-    // Adjust based on how many valid rows we have
-    const weightAdjustment = (totalPossiblePoints / validRows);
 
     // Calculate the overall percentage if possible points are greater than zero
     const percentage = totalPossiblePoints > 0
