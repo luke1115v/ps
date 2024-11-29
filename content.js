@@ -17,22 +17,24 @@ window.onload = function () {
       if (scoreCell) {
         const scoreText = scoreCell.innerText.trim();
 
-        // Skip rows with invalid score formats like "late", "missing", or no score
-        if (scoreText.includes("late") || scoreText.includes("missing") || !scoreText.includes("/")) {
+        // Check if the score follows the "earned/possible" format and is valid (not late, missing, etc.)
+        if (!scoreText.includes("/") || scoreText.includes("late") || scoreText.includes("missing") || scoreText.includes("exempt")) {
           console.log(`Skipping invalid score: ${scoreText}`);
           return; // Skip invalid entries
         }
 
-        // Check if the score follows the "earned/possible" format
+        // Split the score into earned and possible points
         const [earned, possible] = scoreText.split("/").map(Number);
 
         // Log the extracted values for debugging
         console.log(`Extracted Earned: ${earned}, Possible: ${possible}`);
 
-        // Add to total points if the values are valid numbers
+        // Check if the values are valid numbers
         if (!isNaN(earned) && !isNaN(possible)) {
           totalEarnedPoints += earned;
           totalPossiblePoints += possible;
+        } else {
+          console.log(`Invalid score format: ${scoreText}`);
         }
       }
     });
@@ -42,10 +44,9 @@ window.onload = function () {
     console.log(`Total Possible Points: ${totalPossiblePoints}`);
 
     // Calculate the overall percentage if possible points are greater than zero
-    const percentage =
-      totalPossiblePoints > 0
-        ? (totalEarnedPoints / totalPossiblePoints) * 100
-        : 0;
+    const percentage = totalPossiblePoints > 0
+      ? (totalEarnedPoints / totalPossiblePoints) * 100
+      : 0;
 
     // Log the calculated percentage
     console.log(`Overall Percentage: ${percentage}%`);
