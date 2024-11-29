@@ -5,7 +5,7 @@
   "description": "Calculates percentages based on assignments in PowerSchool.",
   "content_scripts": [
     {
-      "matches": ["https://*.powerschool.com/*"],
+      "matches": ["https://aapsd.powerschool.com/*"],
       "js": ["content.js"]
     }
   ],
