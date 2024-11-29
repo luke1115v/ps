@@ -1,5 +1,5 @@
 function calculateOverallPercentage() {
-  // Select all rows in the table (you can refine this if needed)
+  // Select all rows in the table (you can refine this if necessary)
   const rows = document.querySelectorAll("tr"); // This can be more specific if necessary
   let totalEarnedPoints = 0;
   let totalPossiblePoints = 0;
@@ -13,6 +13,11 @@ function calculateOverallPercentage() {
       // Extract the earned and possible points from the score
       const [earned, possible] = scoreCell.innerText.split("/").map(Number);
 
+      // Log the values for debugging
+      console.log(`Row: ${row.innerText}`);
+      console.log(`Score: ${scoreCell.innerText}`);
+      console.log(`Earned: ${earned}, Possible: ${possible}`);
+
       // If both earned and possible points are numbers, add them to totals
       if (!isNaN(earned) && !isNaN(possible)) {
         totalEarnedPoints += earned;
@@ -21,11 +26,18 @@ function calculateOverallPercentage() {
     }
   });
 
+  // Log the totals before calculating the percentage
+  console.log(`Total Earned Points: ${totalEarnedPoints}`);
+  console.log(`Total Possible Points: ${totalPossiblePoints}`);
+
   // Calculate the overall percentage
   const percentage =
     totalPossiblePoints > 0
       ? (totalEarnedPoints / totalPossiblePoints) * 100
       : 0;
+
+  // Log the final percentage for debugging
+  console.log(`Overall Percentage: ${percentage}%`);
 
   displayOverallPercentage(percentage.toFixed(2)); // Show the result with two decimal points
 }
