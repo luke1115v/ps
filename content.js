@@ -16,21 +16,23 @@ window.onload = function () {
       
       if (scoreCell) {
         const scoreText = scoreCell.innerText.trim();
+        
+        // Skip rows with invalid score formats like "late"
+        if (scoreText.includes("late") || !scoreText.includes("/")) {
+          console.log(`Skipping invalid score: ${scoreText}`);
+          return; // Skip invalid entries
+        }
 
         // Check if the score follows the "earned/possible" format
-        if (scoreText.includes("/")) {
-          const [earned, possible] = scoreText.split("/").map(Number);
+        const [earned, possible] = scoreText.split("/").map(Number);
 
-          // Log the extracted values for debugging
-          console.log(`Extracted Earned: ${earned}, Possible: ${possible}`);
+        // Log the extracted values for debugging
+        console.log(`Extracted Earned: ${earned}, Possible: ${possible}`);
 
-          // Add to total points if the values are valid numbers
-          if (!isNaN(earned) && !isNaN(possible)) {
-            totalEarnedPoints += earned;
-            totalPossiblePoints += possible;
-          }
-        } else {
-          console.log(`Skipping invalid score: ${scoreText}`);
+        // Add to total points if the values are valid numbers
+        if (!isNaN(earned) && !isNaN(possible)) {
+          totalEarnedPoints += earned;
+          totalPossiblePoints += possible;
         }
       }
     });
