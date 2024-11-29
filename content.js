@@ -21,23 +21,25 @@ window.onload = function () {
         const scoreText = scoreCell.innerText.trim();
 
         // Check if the score follows the "earned/possible" format and is valid (not late, missing, etc.)
-        if (!scoreText.includes("/") || scoreText.includes("late") || scoreText.includes("missing") || scoreText.includes("exempt")) {
-          console.log(`Skipping invalid score: ${scoreText}`);
-          return; // Skip invalid entries
-        }
+        // We only want to extract "earned/possible" numbers
+        const scoreMatch = scoreText.match(/(\d+\/\d+)/); // Find the "earned/possible" fraction
 
-        // Split the score into earned and possible points
-        const [earned, possible] = scoreText.split("/").map(Number);
+        if (scoreMatch) {
+          const [earnedPossible] = scoreMatch; // Get the matched score (e.g., "1/1")
+          const [earned, possible] = earnedPossible.split("/").map(Number);
 
-        // Log the extracted values for debugging
-        console.log(`Extracted Earned: ${earned}, Possible: ${possible}`);
+          // Log the extracted values for debugging
+          console.log(`Extracted Earned: ${earned}, Possible: ${possible}`);
 
-        // Check if the values are valid numbers
-        if (!isNaN(earned) && !isNaN(possible)) {
-          totalEarnedPoints += earned;
-          totalPossiblePoints += possible;
+          // Check if the values are valid numbers
+          if (!isNaN(earned) && !isNaN(possible)) {
+            totalEarnedPoints += earned;
+            totalPossiblePoints += possible;
+          } else {
+            console.log(`Invalid score format: ${earnedPossible}`);
+          }
         } else {
-          console.log(`Invalid score format: ${scoreText}`);
+          console.log(`Skipping invalid score: ${scoreText}`);
         }
       }
     });
