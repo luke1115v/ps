@@ -14,7 +14,7 @@ window.onload = function () {
       const cells = row.querySelectorAll("td"); // Get all cells in the row
       if (cells.length > 0) {
         // Assuming score data might be in the second-to-last column
-        const scoreText = cells[cells.length - 2]?.innerText?.trim(); // Safely access the second-to-last column
+        const scoreText = cells[cells.length - 1]?.innerText?.trim(); // Safely access the second-to-last column
 
         // Log the scoreText for debugging purposes
         console.log(`Row ${index + 1}: ${scoreText}`);
