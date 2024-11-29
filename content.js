@@ -1,56 +1,61 @@
 window.onload = function () {
-  // Ensure the script runs after the DOM is fully loaded
-  setTimeout(calculateOverallPercentage, 500); // Delay the execution if necessary
+  // Delay the execution further to ensure external scripts have loaded
+  setTimeout(calculateOverallPercentage, 1000); // Wait 1 second before running the script
 
   function calculateOverallPercentage() {
-    // Select all rows in the table (can adjust for specific table, e.g., "tbody tr")
-    const rows = document.querySelectorAll("tr"); // Adjust if necessary
+    const rows = document.querySelectorAll("tr"); // Select all rows in the table
     let totalEarnedPoints = 0;
     let totalPossiblePoints = 0;
 
     rows.forEach((row, index) => {
-      // Adjust the column index here (replace 5 if necessary)
-      const scoreCell = row.querySelector("td:nth-child(5)"); // Update this selector based on your table structure
+      // Log the entire row for debugging to see the structure
+      console.log(`Row ${index + 1}: ${row.innerText}`);
+
+      // Try to find the correct cell with the points (adjust column index if necessary)
+      const scoreCell = row.querySelector("td:nth-child(5)"); // Assuming points are in the 5th column
       
-      // Check if the score cell exists and contains a valid score (like "64/68")
-      if (scoreCell && scoreCell.innerText.includes("/")) {
-        // Extract earned and possible points from the score (e.g., "64/68")
-        const [earned, possible] = scoreCell.innerText.split("/").map(Number);
+      if (scoreCell) {
+        const scoreText = scoreCell.innerText.trim();
 
-        // Log the extracted values for debugging
-        console.log(`Row ${index + 1}: ${row.innerText}`);
-        console.log(`Score: ${scoreCell.innerText}`);
-        console.log(`Earned: ${earned}, Possible: ${possible}`);
+        // Check if the score follows the "earned/possible" format
+        if (scoreText.includes("/")) {
+          const [earned, possible] = scoreText.split("/").map(Number);
 
-        // If both earned and possible points are valid numbers, add them to totals
-        if (!isNaN(earned) && !isNaN(possible)) {
-          totalEarnedPoints += earned;
-          totalPossiblePoints += possible;
+          // Log the extracted values for debugging
+          console.log(`Extracted Earned: ${earned}, Possible: ${possible}`);
+
+          // Add to total points if the values are valid numbers
+          if (!isNaN(earned) && !isNaN(possible)) {
+            totalEarnedPoints += earned;
+            totalPossiblePoints += possible;
+          }
+        } else {
+          console.log(`Skipping invalid score: ${scoreText}`);
         }
       }
     });
 
-    // Log the totals before calculating the percentage
+    // Check if the totals are being calculated correctly
     console.log(`Total Earned Points: ${totalEarnedPoints}`);
     console.log(`Total Possible Points: ${totalPossiblePoints}`);
 
-    // Calculate the overall percentage
+    // Calculate the overall percentage if possible points are greater than zero
     const percentage =
       totalPossiblePoints > 0
         ? (totalEarnedPoints / totalPossiblePoints) * 100
         : 0;
 
-    // Log the final calculated percentage
+    // Log the calculated percentage
     console.log(`Overall Percentage: ${percentage}%`);
 
-    displayOverallPercentage(percentage.toFixed(2)); // Show the result with two decimal points
+    displayOverallPercentage(percentage.toFixed(2)); // Display percentage with two decimal places
   }
 
   function displayOverallPercentage(percentage) {
     // Check if the display element already exists
     let percentageDisplay = document.getElementById("overall-percentage");
     if (!percentageDisplay) {
-      // Create a new display element for the overall percentage
+      // Create a new display element for the percentage
       percentageDisplay = document.createElement("div");
       percentageDisplay.id = "overall-percentage";
       percentageDisplay.style.cssText = `
@@ -60,8 +65,8 @@ window.onload = function () {
         color: #4CAF50;
         text-align: left;
       `;
-      
-      // Select the parent container where we want to insert the new display
+
+      // Find the parent container where we want to insert the new element
       const table = document.querySelector("table");
       if (table) {
         table.parentNode.insertBefore(percentageDisplay, table);
@@ -70,7 +75,7 @@ window.onload = function () {
       }
     }
 
-    // Display the calculated percentage
+    // Display the calculated overall percentage
     percentageDisplay.innerText = `Overall Percentage: ${percentage}%`;
   }
 };
