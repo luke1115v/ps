@@ -1,51 +1,50 @@
-// Function to parse assignments and calculate total grade percentage
-function calculatePercentage() {
-  // Select assignment rows - update selector based on PowerSchool's structure
-  const assignmentRows = document.querySelectorAll(".assignment-row"); 
-  let totalScore = 0;
-  let totalWeight = 0;
+function calculateOverallPercentage() {
+  // Select rows in the assignment table
+  const rows = document.querySelectorAll("tr"); // Adjust the selector if needed
+  let totalEarnedPoints = 0;
+  let totalPossiblePoints = 0;
 
-  assignmentRows.forEach(row => {
-    // Extract assignment score, total points, and weight
-    const scoreText = row.querySelector(".score").innerText; // Update the selector
-    const weightText = row.querySelector(".weight").innerText; // Update the selector
-    
-    const [score, outOf] = scoreText.split("/").map(Number);
-    const weight = parseFloat(weightText) || 1; // Default weight is 1 if not provided
+  rows.forEach((row) => {
+    const scoreCell = row.querySelector(".score"); // Adjust selector if necessary
+    if (scoreCell && scoreCell.innerText.includes("/")) {
+      // Extract score values
+      const [earned, possible] = scoreCell.innerText.split("/").map(Number);
 
-    if (!isNaN(score) && !isNaN(outOf) && !isNaN(weight)) {
-      totalScore += (score / outOf) * weight;
-      totalWeight += weight;
+      if (!isNaN(earned) && !isNaN(possible)) {
+        totalEarnedPoints += earned;
+        totalPossiblePoints += possible;
+      }
     }
   });
 
-  const percentage = totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0;
+  // Calculate the percentage
+  const percentage =
+    totalPossiblePoints > 0
+      ? (totalEarnedPoints / totalPossiblePoints) * 100
+      : 0;
 
-  // Display the percentage in the PowerSchool interface
-  displayPercentage(percentage);
+  displayOverallPercentage(percentage.toFixed(2));
 }
 
-// Function to display the calculated percentage
-function displayPercentage(percentage) {
-  // Create a container to show the percentage
-  let percentageContainer = document.getElementById("calculated-percentage");
-  if (!percentageContainer) {
-    percentageContainer = document.createElement("div");
-    percentageContainer.id = "calculated-percentage";
-    percentageContainer.style.cssText = `
-      margin-top: 20px;
+function displayOverallPercentage(percentage) {
+  // Check if the container already exists
+  let percentageDisplay = document.getElementById("overall-percentage");
+  if (!percentageDisplay) {
+    percentageDisplay = document.createElement("div");
+    percentageDisplay.id = "overall-percentage";
+    percentageDisplay.style.cssText = `
+      margin-top: 10px;
       font-size: 16px;
-      color: #4CAF50;
       font-weight: bold;
+      color: #4CAF50;
+      text-align: left;
     `;
-    const gradesContainer = document.querySelector(".grades-section"); // Update selector
-    gradesContainer.appendChild(percentageContainer);
+    const table = document.querySelector("table"); // Adjust to the table selector
+    table.parentNode.insertBefore(percentageDisplay, table);
   }
 
-  percentageContainer.innerText = `Calculated Percentage: ${percentage.toFixed(2)}%`;
+  percentageDisplay.innerText = `Overall Percentage: ${percentage}%`;
 }
 
-// Run the calculation when the page loads
-window.onload = () => {
-  calculatePercentage();
-};
+// Run the calculation on page load
+window.onload = () => calculateOverallPercentage();
