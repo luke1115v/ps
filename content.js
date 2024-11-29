@@ -1,15 +1,19 @@
 function calculateOverallPercentage() {
-  // Select rows in the assignment table
-  const rows = document.querySelectorAll("tr"); // Adjust the selector if needed
+  // Select all rows in the table (you can refine this if needed)
+  const rows = document.querySelectorAll("tr"); // This can be more specific if necessary
   let totalEarnedPoints = 0;
   let totalPossiblePoints = 0;
 
   rows.forEach((row) => {
-    const scoreCell = row.querySelector(".score"); // Adjust selector if necessary
+    // Locate the cell that contains the score
+    const scoreCell = row.querySelector("td:nth-child(5)"); // 5th column for Score (adjust if necessary)
+    
+    // Check if the score cell exists and contains a valid score (like "64/68")
     if (scoreCell && scoreCell.innerText.includes("/")) {
-      // Extract score values
+      // Extract the earned and possible points from the score
       const [earned, possible] = scoreCell.innerText.split("/").map(Number);
 
+      // If both earned and possible points are numbers, add them to totals
       if (!isNaN(earned) && !isNaN(possible)) {
         totalEarnedPoints += earned;
         totalPossiblePoints += possible;
@@ -17,19 +21,20 @@ function calculateOverallPercentage() {
     }
   });
 
-  // Calculate the percentage
+  // Calculate the overall percentage
   const percentage =
     totalPossiblePoints > 0
       ? (totalEarnedPoints / totalPossiblePoints) * 100
       : 0;
 
-  displayOverallPercentage(percentage.toFixed(2));
+  displayOverallPercentage(percentage.toFixed(2)); // Show the result with two decimal points
 }
 
 function displayOverallPercentage(percentage) {
-  // Check if the container already exists
+  // Check if the display element already exists
   let percentageDisplay = document.getElementById("overall-percentage");
   if (!percentageDisplay) {
+    // Create a new display element for the overall percentage
     percentageDisplay = document.createElement("div");
     percentageDisplay.id = "overall-percentage";
     percentageDisplay.style.cssText = `
@@ -39,12 +44,13 @@ function displayOverallPercentage(percentage) {
       color: #4CAF50;
       text-align: left;
     `;
-    const table = document.querySelector("table"); // Adjust to the table selector
+    const table = document.querySelector("table"); // Find the table to place the result above
     table.parentNode.insertBefore(percentageDisplay, table);
   }
 
+  // Display the calculated percentage
   percentageDisplay.innerText = `Overall Percentage: ${percentage}%`;
 }
 
-// Run the calculation on page load
+// Run the calculation when the page has loaded
 window.onload = () => calculateOverallPercentage();
