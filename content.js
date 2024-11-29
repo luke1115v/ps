@@ -58,7 +58,7 @@ window.onload = function () {
             totalEarnedPoints += earned * weight;
             totalPossiblePoints += possible * weight;
           } else {
-            console.log(`Invalid score format: ${earnedPossible}`);
+            console.log(`Skipping invalid score: ${scoreText}`);
           }
         } else {
           console.log(`Skipping invalid score: ${scoreText}`);
