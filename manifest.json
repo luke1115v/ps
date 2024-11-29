@@ -1,19 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "Popup Calculator",
+  "name": "PowerSchool Grade Calculator",
   "version": "1.0",
-  "description": "A simple popup calculator.",
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icon.png",
-      "48": "icon.png",
-      "128": "icon.png"
+  "description": "Calculates percentages based on assignments in PowerSchool.",
+  "content_scripts": [
+    {
+      "matches": ["https://*.powerschool.com/*"],
+      "js": ["content.js"]
     }
-  },
-  "icons": {
-    "16": "icon.png",
-    "48": "icon.png",
-    "128": "icon.png"
-  }
+  ],
+  "permissions": [
+    "activeTab"
+  ]
 }
