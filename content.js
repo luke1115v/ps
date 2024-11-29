@@ -22,8 +22,14 @@ window.onload = function () {
         // Log the scoreText and assignmentType for debugging purposes
         console.log(`Row ${index + 1}: ${scoreText}, Type: ${assignmentType}`);
 
+        // Ensure both scoreText and assignmentType are valid
+        if (!scoreText || !assignmentType) {
+          console.log(`Skipping invalid row: ${index + 1}`);
+          return; // Skip this row if either scoreText or assignmentType is invalid
+        }
+
         // Try to find a valid "earned/possible" fraction (e.g., "1/1")
-        const scoreMatch = scoreText ? scoreText.match(/(\d+\/\d+)/) : null; // Match a fraction format like "1/1"
+        const scoreMatch = scoreText.match(/(\d+\/\d+)/); // Match a fraction format like "1/1"
 
         if (scoreMatch) {
           // If a valid fraction is found, extract it
@@ -57,6 +63,8 @@ window.onload = function () {
         } else {
           console.log(`Skipping invalid score: ${scoreText}`);
         }
+      } else {
+        console.log(`Skipping empty row: ${index + 1}`);
       }
     });
 
