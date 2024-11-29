@@ -13,11 +13,14 @@ window.onload = function () {
 
       const cells = row.querySelectorAll("td"); // Get all cells in the row
       if (cells.length > 0) {
-        // Assuming score data might be in the second-to-last column
-        const scoreText = cells[cells.length - 12]?.innerText?.trim(); // Safely access the second-to-last column
+        // Assuming the assignment type is in the second-to-last column
+        const assignmentType = cells[cells.length - 12]?.innerText?.trim();
 
-        // Log the scoreText for debugging purposes
-        console.log(`Row ${index + 1}: ${scoreText}`);
+        // Assuming the score is in the second-to-last column for each row
+        const scoreText = cells[cells.length - 3]?.innerText?.trim(); // Safely access the second-to-last column
+
+        // Log the scoreText and assignmentType for debugging purposes
+        console.log(`Row ${index + 1}: ${scoreText}, Type: ${assignmentType}`);
 
         // Try to find a valid "earned/possible" fraction (e.g., "1/1")
         const scoreMatch = scoreText ? scoreText.match(/(\d+\/\d+)/) : null; // Match a fraction format like "1/1"
@@ -30,10 +33,24 @@ window.onload = function () {
           // Log the extracted values for debugging
           console.log(`Extracted Earned: ${earned}, Possible: ${possible}`);
 
-          // Add to total points if the values are valid numbers
+          // Set the weight based on the assignment type
+          let weight = 0;
+
+          if (assignmentType === "Final") {
+            weight = 0.10; // Finals weigh 10%
+          } else if (assignmentType === "Process") {
+            weight = 0.20; // Process weighs 20%
+          } else if (assignmentType === "Mastery") {
+            weight = 0.70; // Mastery weighs 70%
+          }
+
+          // Log the weight applied to the assignment
+          console.log(`Weight applied: ${weight}`);
+
+          // Add to total points, applying the weight to both earned and possible points
           if (!isNaN(earned) && !isNaN(possible)) {
-            totalEarnedPoints += earned;
-            totalPossiblePoints += possible;
+            totalEarnedPoints += earned * weight;
+            totalPossiblePoints += possible * weight;
           } else {
             console.log(`Invalid score format: ${earnedPossible}`);
           }
