@@ -17,8 +17,8 @@ window.onload = function () {
       if (scoreCell) {
         const scoreText = scoreCell.innerText.trim();
         
-        // Skip rows with invalid score formats like "late"
-        if (scoreText.includes("late") || !scoreText.includes("/")) {
+        // Skip rows with invalid score formats like "late", "exempt", etc.
+        if (!scoreText.includes("/") || !/^\d+\/\d+$/.test(scoreText)) {
           console.log(`Skipping invalid score: ${scoreText}`);
           return; // Skip invalid entries
         }
