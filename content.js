@@ -1,24 +1,24 @@
 function calculateOverallPercentage() {
-  // Select all rows in the table (you can refine this if necessary)
-  const rows = document.querySelectorAll("tr"); // This can be more specific if necessary
+  // Select all rows in the table (can adjust for specific table, e.g., "tbody tr")
+  const rows = document.querySelectorAll("tr"); // Adjust if necessary
   let totalEarnedPoints = 0;
   let totalPossiblePoints = 0;
 
   rows.forEach((row) => {
-    // Locate the cell that contains the score
-    const scoreCell = row.querySelector("td:nth-child(5)"); // 5th column for Score (adjust if necessary)
+    // Adjust the column index here (replace 5 if necessary)
+    const scoreCell = row.querySelector("td:nth-child(5)"); // Update this selector based on your table structure
     
     // Check if the score cell exists and contains a valid score (like "64/68")
     if (scoreCell && scoreCell.innerText.includes("/")) {
-      // Extract the earned and possible points from the score
+      // Extract earned and possible points from the score (e.g., "64/68")
       const [earned, possible] = scoreCell.innerText.split("/").map(Number);
 
-      // Log the values for debugging
+      // Log the extracted values for debugging
       console.log(`Row: ${row.innerText}`);
       console.log(`Score: ${scoreCell.innerText}`);
       console.log(`Earned: ${earned}, Possible: ${possible}`);
 
-      // If both earned and possible points are numbers, add them to totals
+      // If both earned and possible points are valid numbers, add them to totals
       if (!isNaN(earned) && !isNaN(possible)) {
         totalEarnedPoints += earned;
         totalPossiblePoints += possible;
@@ -36,7 +36,7 @@ function calculateOverallPercentage() {
       ? (totalEarnedPoints / totalPossiblePoints) * 100
       : 0;
 
-  // Log the final percentage for debugging
+  // Log the final calculated percentage
   console.log(`Overall Percentage: ${percentage}%`);
 
   displayOverallPercentage(percentage.toFixed(2)); // Show the result with two decimal points
