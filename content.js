@@ -1,6 +1,6 @@
-document.addEventListener('DOMContentLoaded', function () {
+window.onload = function () {
   // Ensure the script runs after the DOM is fully loaded
-  setTimeout(calculateOverallPercentage, 500); // Delay the execution a bit if necessary
+  setTimeout(calculateOverallPercentage, 500); // Delay the execution if necessary
 
   function calculateOverallPercentage() {
     // Select all rows in the table (can adjust for specific table, e.g., "tbody tr")
@@ -73,4 +73,4 @@ document.addEventListener('DOMContentLoaded', function () {
     // Display the calculated percentage
     percentageDisplay.innerText = `Overall Percentage: ${percentage}%`;
   }
-});
+};
