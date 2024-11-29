@@ -6,6 +6,7 @@ window.onload = function () {
     const rows = document.querySelectorAll("tr"); // Select all rows in the table
     let totalEarnedPoints = 0;
     let totalPossiblePoints = 0;
+    let totalWeightApplied = 0;
 
     rows.forEach((row, index) => {
       // Skip the first three rows (header or irrelevant data)
@@ -13,58 +14,50 @@ window.onload = function () {
 
       const cells = row.querySelectorAll("td"); // Get all cells in the row
       if (cells.length > 0) {
-        // Assuming assignment type is in the second-to-last column
-        const assignmentType = cells[cells.length - 12]?.innerText?.trim();
-
-        // Skip the row if the assignment type is undefined or invalid
-        if (!assignmentType) {
-          console.log(`Skipping invalid row: ${index + 1} (Invalid assignment type)`);
-          return; // Skip this row
-        }
-
-        // Assuming the score is in the second-to-last column for each row
+        // Assuming the assignment type is in the second-to-last column
         const scoreText = cells[cells.length - 3]?.innerText?.trim(); // Safely access the second-to-last column
+        const assignmentType = cells[cells.length - 12]?.innerText?.trim(); // Safely access the assignment type column
 
-        // Log the scoreText and assignmentType for debugging purposes
-        console.log(`Row ${index + 1}: ${scoreText}, Type: ${assignmentType}`);
+        // Log the row data for debugging purposes
+        console.log(`Row ${index + 1}: Score: ${scoreText}, Type: ${assignmentType}`);
 
         // Try to find a valid "earned/possible" fraction (e.g., "1/1")
-        const scoreMatch = scoreText.match(/(\d+\/\d+)/); // Match a fraction format like "1/1"
+        const scoreMatch = scoreText ? scoreText.match(/(\d+\/\d+)/) : null; // Match a fraction format like "1/1"
 
-        if (scoreMatch) {
-          // If a valid fraction is found, extract it
+        if (scoreMatch && assignmentType) {
+          // If a valid fraction is found and assignment type is valid, process it
           const earnedPossible = scoreMatch[0]; // Get the matched "earned/possible" score
           const [earned, possible] = earnedPossible.split("/").map(Number); // Split into earned and possible
 
           // Log the extracted values for debugging
           console.log(`Extracted Earned: ${earned}, Possible: ${possible}`);
 
-          // Set the weight based on the assignment type
+          // Determine the weight based on the assignment type
           let weight = 0;
-
           if (assignmentType === "Final") {
-            weight = 0.10; // Finals weigh 10%
+            weight = 0.10;
           } else if (assignmentType === "Process") {
-            weight = 0.20; // Process weighs 20%
+            weight = 0.20;
           } else if (assignmentType === "Mastery") {
-            weight = 0.70; // Mastery weighs 70%
+            weight = 0.70;
+          } else {
+            // Log if the type is invalid
+            console.log(`Skipping invalid row: ${index + 1} (Invalid assignment type)`);
+            return; // Skip this row if the type is invalid
           }
 
-          // Log the weight applied to the assignment
+          // Log the weight applied
           console.log(`Weight applied: ${weight}`);
 
-          // Add to total points, applying the weight to both earned and possible points
-          if (!isNaN(earned) && !isNaN(possible)) {
-            totalEarnedPoints += earned * weight;
-            totalPossiblePoints += possible * weight;
-          } else {
-            console.log(`Skipping invalid score: ${scoreText}`);
-          }
+          // Calculate weighted earned and possible points
+          totalEarnedPoints += earned * weight;
+          totalPossiblePoints += possible * weight;
+          totalWeightApplied += weight; // Track the total weight applied
+
         } else {
+          // Log if the score is invalid
           console.log(`Skipping invalid score: ${scoreText}`);
         }
-      } else {
-        console.log(`Skipping empty row: ${index + 1}`);
       }
     });
 
@@ -74,6 +67,9 @@ window.onload = function () {
       : 0;
 
     // Log the calculated percentage for debugging
+    console.log(`Total Earned Points: ${totalEarnedPoints}`);
+    console.log(`Total Possible Points: ${totalPossiblePoints}`);
+    console.log(`Total Weight Applied: ${totalWeightApplied}`);
     console.log(`Overall Percentage: ${percentage}%`);
 
     // Display the percentage
