@@ -8,6 +8,9 @@ window.onload = function () {
     let totalPossiblePoints = 0;
 
     rows.forEach((row, index) => {
+      // Skip the first three rows
+      if (index < 3) return;
+
       // Log the entire row for debugging to see the structure
       console.log(`Row ${index + 1}: ${row.innerText}`);
 
