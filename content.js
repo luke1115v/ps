@@ -1,76 +1,83 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // Ensuring that the DOM is ready before attempting to manipulate it
+window.onload = function () {
+  // Delay the execution further to ensure external scripts have loaded
+  setTimeout(calculateOverallPercentage, 1000); // Wait 1 second before running the script
 
-    // Function to dynamically add content instead of using document.write
-    function updateContent(id, content) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.innerHTML = content; // Updates the element's inner HTML
+  function calculateOverallPercentage() {
+    const rows = document.querySelectorAll("tr"); // Select all rows in the table
+    let totalEarnedPoints = 0;
+    let totalPossiblePoints = 0;
+
+    rows.forEach((row, index) => {
+      // Log the entire row for debugging to see the structure
+      console.log(`Row ${index + 1}: ${row.innerText}`);
+
+      // Try to find the correct cell with the points (adjust column index if necessary)
+      const scoreCell = row.querySelector("td:nth-child(5)"); // Assuming points are in the 5th column
+      
+      if (scoreCell) {
+        const scoreText = scoreCell.innerText.trim();
+        
+        // Skip rows with invalid score formats like "late"
+        if (scoreText.includes("late") || !scoreText.includes("/")) {
+          console.log(`Skipping invalid score: ${scoreText}`);
+          return; // Skip invalid entries
         }
-    }
 
-    // Example: Dynamically updating the 'Total Points' section
-    function updateGradeTotals(totalEarned, totalPossible) {
-        const earnedPoints = document.getElementById('totalEarnedPoints');
-        const possiblePoints = document.getElementById('totalPossiblePoints');
+        // Check if the score follows the "earned/possible" format
+        const [earned, possible] = scoreText.split("/").map(Number);
 
-        if (earnedPoints && possiblePoints) {
-            earnedPoints.innerText = totalEarned;
-            possiblePoints.innerText = totalPossible;
+        // Log the extracted values for debugging
+        console.log(`Extracted Earned: ${earned}, Possible: ${possible}`);
+
+        // Add to total points if the values are valid numbers
+        if (!isNaN(earned) && !isNaN(possible)) {
+          totalEarnedPoints += earned;
+          totalPossiblePoints += possible;
         }
-    }
-
-    // Handle invalid or missing scores (adjust depending on logic)
-    function handleInvalidScores(score) {
-        // Skipping invalid scores like 'late' or 'missing'
-        if (score === 'late' || score === 'missing' || score === '') {
-            return false; // Skip
-        }
-        return true; // Include score
-    }
-
-    // Grades data example with some invalid entries
-    const gradesData = [
-        { date: '11/22/2024', assignment: 'MC Midterm', score: '17/20', grade: 'B' },
-        { date: '11/22/2024', assignment: 'FRQ Midterm', score: '11/12', grade: 'A-' },
-        { date: '11/21/2024', assignment: 'CodeHS 5.1-5.2 Exercises', score: '1/1', grade: 'A+' },
-        { date: '11/18/2024', assignment: 'Unit 4 Test', score: 'late', grade: 'Exempt' }, // Invalid score
-        { date: '10/28/2024', assignment: 'Unit 3 Test', score: '', grade: '' } // Missing score
-    ];
-
-    const gradesContainer = document.getElementById('gradesContainer');
-    
-    gradesData.forEach((grade) => {
-        if (handleInvalidScores(grade.score)) {
-            const gradeRow = document.createElement('div');
-            gradeRow.classList.add('grade-row');
-            gradeRow.innerHTML = `
-                <div>${grade.date}</div>
-                <div>${grade.assignment}</div>
-                <div>${grade.score}</div>
-                <div>${grade.grade}</div>
-            `;
-            gradesContainer.appendChild(gradeRow);
-        }
+      }
     });
 
-    // Calculate and update total points (only for valid scores)
-    const totalEarned = gradesData.reduce((sum, grade) => {
-        if (handleInvalidScores(grade.score)) {
-            const [earned, possible] = grade.score.split('/').map(Number);
-            return sum + earned;
-        }
-        return sum;
-    }, 0);
+    // Check if the totals are being calculated correctly
+    console.log(`Total Earned Points: ${totalEarnedPoints}`);
+    console.log(`Total Possible Points: ${totalPossiblePoints}`);
 
-    const totalPossible = gradesData.reduce((sum, grade) => {
-        if (handleInvalidScores(grade.score)) {
-            const [, possible] = grade.score.split('/').map(Number);
-            return sum + possible;
-        }
-        return sum;
-    }, 0);
+    // Calculate the overall percentage if possible points are greater than zero
+    const percentage =
+      totalPossiblePoints > 0
+        ? (totalEarnedPoints / totalPossiblePoints) * 100
+        : 0;
 
-    // Updating the grade totals
-    updateGradeTotals(totalEarned, totalPossible);
-});
+    // Log the calculated percentage
+    console.log(`Overall Percentage: ${percentage}%`);
+
+    displayOverallPercentage(percentage.toFixed(2)); // Display percentage with two decimal places
+  }
+
+  function displayOverallPercentage(percentage) {
+    // Check if the display element already exists
+    let percentageDisplay = document.getElementById("overall-percentage");
+    if (!percentageDisplay) {
+      // Create a new display element for the percentage
+      percentageDisplay = document.createElement("div");
+      percentageDisplay.id = "overall-percentage";
+      percentageDisplay.style.cssText = `
+        margin-top: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #4CAF50;
+        text-align: left;
+      `;
+
+      // Find the parent container where we want to insert the new element
+      const table = document.querySelector("table");
+      if (table) {
+        table.parentNode.insertBefore(percentageDisplay, table);
+      } else {
+        console.log("Table not found, unable to insert percentage display.");
+      }
+    }
+
+    // Display the calculated overall percentage
+    percentageDisplay.innerText = `Overall Percentage: ${percentage}%`;
+  }
+};
