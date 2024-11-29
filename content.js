@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let totalEarnedPoints = 0;
     let totalPossiblePoints = 0;
 
-    rows.forEach((row) => {
+    rows.forEach((row, index) => {
       // Adjust the column index here (replace 5 if necessary)
       const scoreCell = row.querySelector("td:nth-child(5)"); // Update this selector based on your table structure
       
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const [earned, possible] = scoreCell.innerText.split("/").map(Number);
 
         // Log the extracted values for debugging
-        console.log(`Row: ${row.innerText}`);
+        console.log(`Row ${index + 1}: ${row.innerText}`);
         console.log(`Score: ${scoreCell.innerText}`);
         console.log(`Earned: ${earned}, Possible: ${possible}`);
 
@@ -57,8 +57,14 @@ document.addEventListener('DOMContentLoaded', function () {
         color: #4CAF50;
         text-align: left;
       `;
-      const table = document.querySelector("table"); // Find the table to place the result above
-      table.parentNode.insertBefore(percentageDisplay, table);
+      
+      // Select the parent container where we want to insert the new display
+      const table = document.querySelector("table");
+      if (table) {
+        table.parentNode.insertBefore(percentageDisplay, table);
+      } else {
+        console.log("Table not found, unable to insert percentage display.");
+      }
     }
 
     // Display the calculated percentage
