@@ -6,6 +6,7 @@ window.onload = function () {
     const rows = document.querySelectorAll("tr"); // Select all rows in the table
     let totalEarnedPoints = 0;
     let totalPossiblePoints = 0;
+    let validRows = 0; // Track the number of valid rows
 
     rows.forEach((row, index) => {
       // Skip the first three rows (header or irrelevant data)
@@ -57,6 +58,7 @@ window.onload = function () {
           if (!isNaN(earned) && !isNaN(possible)) {
             totalEarnedPoints += earned * weight;
             totalPossiblePoints += possible * weight;
+            validRows++; // Increment valid rows counter
           } else {
             console.log(`Invalid score format: ${earnedPossible}`);
           }
@@ -67,6 +69,17 @@ window.onload = function () {
         console.log(`Skipping empty row: ${index + 1}`);
       }
     });
+
+    // If no valid rows were processed, skip further calculation
+    if (validRows === 0) {
+      console.log("No valid rows found.");
+      displayOverallPercentage(0);
+      return;
+    }
+
+    // After calculation, we adjust the total possible points and earned points
+    // Adjust based on how many valid rows we have
+    const weightAdjustment = (totalPossiblePoints / validRows);
 
     // Calculate the overall percentage if possible points are greater than zero
     const percentage = totalPossiblePoints > 0
