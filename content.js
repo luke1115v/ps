@@ -1,6 +1,6 @@
 window.onload = function () {
-  // Delay the execution further to ensure external scripts have loaded
-  setTimeout(calculateOverallPercentage, 1000); // Wait 1 second before running the script
+  // Delay execution slightly to ensure all scripts have loaded
+  setTimeout(calculateOverallPercentage, 1000);
 
   function calculateOverallPercentage() {
     const rows = document.querySelectorAll("tr"); // Select all rows in the table
@@ -8,30 +8,28 @@ window.onload = function () {
     let totalPossiblePoints = 0;
 
     rows.forEach((row, index) => {
-      // Skip the first three rows
+      // Skip the first three rows (header or irrelevant data)
       if (index < 3) return;
 
-      // Log the entire row for debugging to see the structure
-      console.log(`Row ${index + 1}: ${row.innerText}`);
+      const cells = row.querySelectorAll("td"); // Get all cells in the row
+      if (cells.length > 0) {
+        const scoreText = cells[cells.length - 2].innerText.trim(); // Assuming the score is in the second last column
 
-      // Try to find the correct cell with the points (adjust column index if necessary)
-      const scoreCell = row.querySelector("td:nth-child(5)"); // Assuming points are in the 5th column
-      
-      if (scoreCell) {
-        const scoreText = scoreCell.innerText.trim();
+        // Log the scoreText for debugging purposes
+        console.log(`Row ${index + 1}: ${scoreText}`);
 
-        // Check if the score follows the "earned/possible" format and is valid (not late, missing, etc.)
-        // We only want to extract "earned/possible" numbers
-        const scoreMatch = scoreText.match(/(\d+\/\d+)/); // Find the "earned/possible" fraction
+        // Try to find a valid "earned/possible" fraction (e.g., "1/1")
+        const scoreMatch = scoreText.match(/(\d+\/\d+)/); // Match a fraction format like "1/1"
 
         if (scoreMatch) {
-          const [earnedPossible] = scoreMatch; // Get the matched score (e.g., "1/1")
-          const [earned, possible] = earnedPossible.split("/").map(Number);
+          // If a valid fraction is found, extract it
+          const earnedPossible = scoreMatch[0]; // Get the matched "earned/possible" score
+          const [earned, possible] = earnedPossible.split("/").map(Number); // Split into earned and possible
 
           // Log the extracted values for debugging
           console.log(`Extracted Earned: ${earned}, Possible: ${possible}`);
 
-          // Check if the values are valid numbers
+          // Add to total points if the values are valid numbers
           if (!isNaN(earned) && !isNaN(possible)) {
             totalEarnedPoints += earned;
             totalPossiblePoints += possible;
@@ -44,19 +42,16 @@ window.onload = function () {
       }
     });
 
-    // Check if the totals are being calculated correctly
-    console.log(`Total Earned Points: ${totalEarnedPoints}`);
-    console.log(`Total Possible Points: ${totalPossiblePoints}`);
-
     // Calculate the overall percentage if possible points are greater than zero
     const percentage = totalPossiblePoints > 0
       ? (totalEarnedPoints / totalPossiblePoints) * 100
       : 0;
 
-    // Log the calculated percentage
+    // Log the calculated percentage for debugging
     console.log(`Overall Percentage: ${percentage}%`);
 
-    displayOverallPercentage(percentage.toFixed(2)); // Display percentage with two decimal places
+    // Display the percentage
+    displayOverallPercentage(percentage.toFixed(2));
   }
 
   function displayOverallPercentage(percentage) {
